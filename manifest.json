@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Amazon Review Summarizer",
+    "version": "1.0",
+    "description": "Summarizes the reviews on an Amazon page.",
+    "action": {
+        "default_title": "Click to view a popup",
+        "default_popup": "index.html"
+    }
+}

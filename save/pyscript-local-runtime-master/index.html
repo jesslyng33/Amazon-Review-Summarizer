@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PyScript Hello World</title>
+    <py-config>
+      [[runtimes]]
+      src = "runtime/pyodide.js"
+      name = "pyodide-0.21.3"
+      lang = "python"
+    </py-config>
+    <link rel="icon" type="image/png" href="/icon-128.png" />
+    <link rel="stylesheet" href="runtime/pyscript.css" />
+    <script defer src="runtime/pyscript.js"></script>
+  </head>
+  <body>
+    <py-script>
+      import requests
+      import openai
+      from bs4 import BeautifulSoup
+
+      URL = "https://www.amazon.com/Dinosaur-Weighted-Stuffed-Animals-Anxiety/dp/B0BBPH6SGF/ref=sr_1_5?keywords=weighted+dino&qid=1687788233&sr=8-5"
+      page = requests.get("http://localhost:8050/render.html", params = {"url": URL, "wait": 2})
+
+      soup = BeautifulSoup(page.text, "html.parser")
+      allReviewCards = soup.find_all("div", {"class": "a-section review aok-relative"})
+
+      allReviews = []
+
+      for card in allReviewCards:
+        review = card.find("div", {"class": "a-expander-content reviewText review-text-content a-expander-partial-collapse-content"})
+        review = review.find("span")
+        allReviews.append(review.text)
+
+      openai.api_key = "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"
+
+      messages = [{"role": "user", "content": "Here is a list of reviews for a product: " + str(allReviews) + "Please give a summary of the reviews of this product."}]
+
+      response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+      reply = response["choices"][0]["message"]["content"]
+      print(reply)
+    </py-script>
+  </body>
+  <script src="finished.js"></script>
+</html>
+
